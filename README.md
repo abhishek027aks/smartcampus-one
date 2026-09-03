@@ -1,82 +1,68 @@
-::: {align="center"}
-`<a href="https://github.com/abhishek027aks/smartcampus-one">`{=html}
-`<img src="assets/banner.svg" alt="SmartCampus One" width="100%">`{=html}
-`</a>`{=html}
+<div align="center">
 
-`<br/>`{=html}
+<a href="https://github.com/abhishek027aks/smartcampus-one">
+  <img src="assets/banner.svg" alt="SmartCampus One" width="100%">
+</a>
 
-`<img src="assets/logo.svg" alt="SmartCampus One Logo" width="110"/>`{=html}
+<br><br>
+
+<img src="assets/logo.svg" alt="SmartCampus One Logo" width="110">
 
 # SmartCampus One
 
 ### One Smart Platform for Every Campus
 
-```{=html}
-<p>
-```
-`<strong>`{=html}Multi-College Smart Timetable & Attendance Management
-Platform`</strong>`{=html}
-```{=html}
-</p>
-```
-```{=html}
-<p>
-```
-`<a href="https://github.com/abhishek027aks/smartcampus-one/stargazers">`{=html}`<img src="https://img.shields.io/github/stars/abhishek027aks/smartcampus-one?style=for-the-badge&logo=github&label=Stars" alt="GitHub Stars">`{=html}`</a>`{=html}
-`<a href="https://github.com/abhishek027aks/smartcampus-one/network/members">`{=html}`<img src="https://img.shields.io/github/forks/abhishek027aks/smartcampus-one?style=for-the-badge&logo=github&label=Forks" alt="GitHub Forks">`{=html}`</a>`{=html}
-`<img src="https://img.shields.io/badge/Status-Active%20Development-22C55E?style=for-the-badge" alt="Active Development">`{=html}
-```{=html}
-</p>
-```
-```{=html}
-<p>
-```
-`<img src="https://img.shields.io/badge/React-18%2B-61DAFB?style=flat-square&logo=react&logoColor=111827" alt="React">`{=html}
-`<img src="https://img.shields.io/badge/TypeScript-5%2B-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript">`{=html}
-`<img src="https://img.shields.io/badge/FastAPI-Python-009688?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI">`{=html}
-`<img src="https://img.shields.io/badge/PostgreSQL-16%2B-4169E1?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL">`{=html}
-`<img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker">`{=html}
-`<img src="https://img.shields.io/badge/REST-API-111827?style=flat-square&logo=swagger&logoColor=white" alt="REST API">`{=html}
-```{=html}
-</p>
-```
-```{=html}
-<p>
-```
-`<a href="#-overview">`{=html}Overview`</a>`{=html} •
-`<a href="#-features">`{=html}Features`</a>`{=html} •
-`<a href="#-attendance-system">`{=html}Attendance`</a>`{=html} •
-`<a href="#-architecture">`{=html}Architecture`</a>`{=html} •
-`<a href="#-installation">`{=html}Installation`</a>`{=html} •
-`<a href="#-roadmap">`{=html}Roadmap`</a>`{=html}
-```{=html}
-</p>
-```
-:::
+**Multi-College Smart Timetable & Attendance Management Platform**
 
-------------------------------------------------------------------------
+<p>
+  <a href="https://github.com/abhishek027aks/smartcampus-one/stargazers">
+    <img src="https://img.shields.io/github/stars/abhishek027aks/smartcampus-one?style=for-the-badge&logo=github&label=Stars" alt="GitHub Stars">
+  </a>
+  <a href="https://github.com/abhishek027aks/smartcampus-one/network/members">
+    <img src="https://img.shields.io/github/forks/abhishek027aks/smartcampus-one?style=for-the-badge&logo=github&label=Forks" alt="GitHub Forks">
+  </a>
+  <img src="https://img.shields.io/badge/Status-Active%20Development-22C55E?style=for-the-badge" alt="Active Development">
+</p>
+
+<p>
+  <img src="https://img.shields.io/badge/React-18%2B-61DAFB?style=flat-square&logo=react&logoColor=111827" alt="React">
+  <img src="https://img.shields.io/badge/TypeScript-5%2B-3178C6?style=flat-square&logo=typescript&logoColor=white" alt="TypeScript">
+  <img src="https://img.shields.io/badge/FastAPI-Python-009688?style=flat-square&logo=fastapi&logoColor=white" alt="FastAPI">
+  <img src="https://img.shields.io/badge/PostgreSQL-16%2B-4169E1?style=flat-square&logo=postgresql&logoColor=white" alt="PostgreSQL">
+  <img src="https://img.shields.io/badge/Docker-Ready-2496ED?style=flat-square&logo=docker&logoColor=white" alt="Docker">
+  <img src="https://img.shields.io/badge/REST-API-111827?style=flat-square&logo=swagger&logoColor=white" alt="REST API">
+</p>
+
+<p>
+  <a href="#-overview">Overview</a> •
+  <a href="#-features">Features</a> •
+  <a href="#-attendance-system">Attendance</a> •
+  <a href="#-timetable-management">Timetable</a> •
+  <a href="#-architecture">Architecture</a> •
+  <a href="#-installation">Installation</a> •
+  <a href="#-roadmap">Roadmap</a>
+</p>
+
+</div>
+
+---
 
 ## 📌 Overview
 
-**SmartCampus One** is a modern, scalable **multi-tenant college
-management platform** built to bring timetable management, lecture-wise
-attendance, student/teacher management, analytics, reports and future
-college integrations into one centralized system.
+**SmartCampus One** is a modern, scalable **multi-tenant college management platform** built to bring timetable management, lecture-wise attendance, student and teacher management, analytics, reports, notifications, and future college integrations into one centralized system.
 
-The platform is designed for **multiple colleges**, while keeping each
-college's academic data logically isolated through a unique **College
-Code** and tenant-aware authorization.
+The platform is designed for **multiple colleges**, while keeping each college's academic data logically isolated through a unique **College Code** and tenant-aware authorization.
 
 ### 🏫 Multi-College Model
 
-``` text
+```text
                          SMARTCAMPUS ONE
                                 │
           ┌─────────────────────┼─────────────────────┐
           │                     │                     │
           ▼                     ▼                     ▼
-      COLLEGE A              COLLEGE B              COLLEGE C
-      ABC-7X29               XYZ-4P82               PQR-9K51
+      COLLEGE A             COLLEGE B             COLLEGE C
+      ABC-7X29              XYZ-4P82              PQR-9K51
           │                     │                     │
           ├─ Students           ├─ Students           ├─ Students
           ├─ Teachers           ├─ Teachers           ├─ Teachers
@@ -84,55 +70,34 @@ Code** and tenant-aware authorization.
           └─ Attendance         └─ Attendance         └─ Attendance
 ```
 
-> 🔐 **Core principle:** users from one college must never be able to
-> access another college's protected data.
+> 🔐 **Core principle:** users from one college must never be able to access another college's protected data.
 
-------------------------------------------------------------------------
+---
 
 # ✨ Features
 
-  -----------------------------------------------------------------------
-  Module                              Highlights
-  ----------------------------------- -----------------------------------
-  🏫 **Multi-College**                Unique college code, tenant
-                                      isolation, college settings
+| Module | Highlights |
+|---|---|
+| 🏫 **Multi-College** | Unique college code, tenant isolation, college settings |
+| 👥 **Role Management** | Super Admin, College Admin, Teacher, Student |
+| 📅 **Smart Timetable** | Manual scheduling, automatic generation, conflict detection |
+| 📸 **Smart Attendance** | Temporary code, expiry timer, live camera photo |
+| 📝 **Manual Attendance** | Teacher fallback with audit trail |
+| 📊 **Analytics** | Student, subject, section and department statistics |
+| 📄 **Reports** | PDF, Excel and CSV-ready reporting |
+| 🔔 **Notifications** | Attendance, timetable and academic alerts |
+| 🔌 **Integrations** | Configurable college ERP/API integration |
+| 🌐 **Deployment** | Responsive web/PWA architecture, Docker and cloud-ready |
 
-  👥 **Role Management**              Super Admin, College Admin,
-                                      Teacher, Student
-
-  📅 **Smart Timetable**              Manual scheduling, automatic
-                                      generation, conflict detection
-
-  📸 **Smart Attendance**             Temporary code, expiry timer, live
-                                      camera photo
-
-  📝 **Manual Attendance**            Teacher fallback with audit trail
-
-  📊 **Analytics**                    Subject, section, department and
-                                      student statistics
-
-  📄 **Reports**                      PDF, Excel and CSV-ready reporting
-
-  🔔 **Notifications**                Attendance, timetable and academic
-                                      alerts
-
-  🔌 **Integrations**                 Configurable college ERP/API
-                                      integration
-
-  🌐 **Deployment**                   Responsive web/PWA architecture,
-                                      Docker and cloud-ready
-  -----------------------------------------------------------------------
-
-------------------------------------------------------------------------
+---
 
 # 📸 Attendance System
 
-SmartCampus One uses a **temporary-code based attendance workflow**
-rather than face recognition as the core attendance mechanism.
+SmartCampus One uses a **temporary-code based attendance workflow** rather than face recognition as the core attendance mechanism.
 
-### Attendance Flow
+### 🔄 Attendance Flow
 
-``` text
+```text
 Teacher
    │
    ▼
@@ -162,7 +127,7 @@ Server-Side Verification
 
 ### 🔢 Example Session
 
-``` text
+```text
 Subject       : Java
 Teacher       : Mr. Sharma
 Section       : BCA 2A
@@ -172,27 +137,26 @@ Valid For     : 2 Minutes
 Status        : ACTIVE
 ```
 
-When the attendance window expires, the code automatically becomes
-invalid.
+When the attendance window expires, the code automatically becomes invalid.
 
 ### 🔎 Verification Checks
 
--   Student authentication
--   College / tenant
--   Course
--   Semester
--   Section
--   Subject
--   Teacher
--   Lecture session
--   Temporary code
--   Code expiry
--   Duplicate attendance
--   Live photo capture
+- Student authentication
+- College / tenant
+- Course
+- Semester
+- Section
+- Subject
+- Teacher
+- Lecture session
+- Temporary code
+- Code expiry
+- Duplicate attendance
+- Live photo capture
 
 ### 📷 Attendance Record
 
-``` text
+```text
 Student
 Roll Number
 College
@@ -208,53 +172,50 @@ Live Photo
 Attendance Status
 ```
 
-> 🔒 Live-photo data should be protected with strict access controls,
-> retention/deletion rules and appropriate privacy/consent practices in
-> real institutional deployments.
+> 🔒 Live-photo data should be protected with strict access controls, retention/deletion rules and appropriate privacy/consent practices in real institutional deployments.
 
-------------------------------------------------------------------------
+---
 
 # 📝 Manual Attendance
 
-Teachers can use manual attendance when a student has a technical
-problem.
+Teachers can use manual attendance when a student has a technical problem.
 
 Examples:
 
--   No smartphone
--   Internet problem
--   Camera problem
--   Device/battery issue
--   Temporary system issue
+- No smartphone
+- Internet problem
+- Camera problem
+- Device/battery issue
+- Temporary system issue
 
 Manual changes should be recorded through an **audit log**.
 
-------------------------------------------------------------------------
+---
 
-# 📅 Smart Timetable
+# 📅 Timetable Management
 
 Administrators can manage:
 
--   Departments
--   Courses
--   Semesters
--   Sections
--   Subjects
--   Teachers
--   Classrooms
--   Laboratories
--   Working days
--   College hours
--   Period duration
--   Teacher availability
--   Room availability
--   Holidays
+- Departments
+- Courses
+- Semesters
+- Sections
+- Subjects
+- Teachers
+- Classrooms
+- Laboratories
+- Working days
+- College hours
+- Period duration
+- Teacher availability
+- Room availability
+- Holidays
 
-### 🤖 Automatic Timetable Generator
+## 🤖 Automatic Timetable Generator
 
 The timetable engine is designed to identify:
 
-``` text
+```text
 ❌ Teacher conflicts
 ❌ Room conflicts
 ❌ Section conflicts
@@ -265,104 +226,103 @@ The timetable engine is designed to identify:
 
 The system should detect conflicts before a timetable is published.
 
-------------------------------------------------------------------------
+---
 
 # 👥 User Roles
 
 ### 🔐 Super Admin
 
--   Manage colleges
--   Global platform configuration
--   System monitoring
--   Global settings
+- Manage colleges
+- Global platform configuration
+- System monitoring
+- Global settings
 
 ### 🏫 College Admin
 
--   Students & teachers
--   Departments & courses
--   Subjects & sections
--   Rooms & labs
--   Timetable
--   Attendance rules
--   Reports
--   Branding
--   Integrations
+- Students & teachers
+- Departments & courses
+- Subjects & sections
+- Rooms & labs
+- Timetable
+- Attendance rules
+- Reports
+- Branding
+- Integrations
 
 ### 👨‍🏫 Teacher
 
--   Today's timetable
--   Start attendance
--   Generate code
--   Monitor live attendance
--   Manual attendance
--   Attendance reports
--   Correction requests
+- Today's timetable
+- Start attendance
+- Generate code
+- Monitor live attendance
+- Manual attendance
+- Attendance reports
+- Correction requests
 
 ### 👨‍🎓 Student
 
--   Today's timetable
--   Join attendance
--   Enter code
--   Capture live photo
--   Attendance percentage
--   Attendance history
--   Notifications
--   Correction requests
+- Today's timetable
+- Join attendance
+- Enter code
+- Capture live photo
+- Attendance percentage
+- Attendance history
+- Notifications
+- Correction requests
 
-------------------------------------------------------------------------
+---
 
 # 📊 Analytics & Reports
 
 ### Attendance Formula
 
-``` text
+```text
 Attendance % =
 (Present Classes / Total Conducted Classes) × 100
 ```
 
 ### Example
 
-  Subject         Present   Conducted   Attendance
-  ------------- --------- ----------- ------------
-  Java                 18          20       🟢 90%
-  DBMS                 15          20       🟡 75%
-  Python               19          20       🟢 95%
-  Mathematics          14          20       🔴 70%
+| Subject | Present | Conducted | Attendance |
+|---|---:|---:|---:|
+| Java | 18 | 20 | 🟢 90% |
+| DBMS | 15 | 20 | 🟡 75% |
+| Python | 19 | 20 | 🟢 95% |
+| Mathematics | 14 | 20 | 🔴 70% |
 
 ### Reports
 
--   Student attendance
--   Subject-wise attendance
--   Section-wise attendance
--   Department-wise attendance
--   Teacher-wise reports
--   Monthly reports
--   Semester reports
+- Student attendance
+- Subject-wise attendance
+- Section-wise attendance
+- Department-wise attendance
+- Teacher-wise reports
+- Monthly reports
+- Semester reports
 
 **Export:** PDF • Excel • CSV
 
-------------------------------------------------------------------------
+---
 
 # 🔔 Notifications
 
 The platform can provide notifications for:
 
--   Attendance updates
--   Low attendance
--   Timetable changes
--   Room changes
--   Class changes
--   Correction request status
--   Important announcements
+- Attendance updates
+- Low attendance
+- Timetable changes
+- Room changes
+- Class changes
+- Correction request status
+- Important announcements
 
-------------------------------------------------------------------------
+---
 
 # 🔌 College API Integration
 
-SmartCampus One is designed to support future integrations with college
-ERP and academic systems.
+SmartCampus One is designed to support future integrations with college ERP and academic systems.
 
-``` text
+```text
 College Admin
      │
      ▼
@@ -378,17 +338,46 @@ Integration Settings
        Secure Backend
              │
              ▼
-       External College API
+      External College API
 ```
 
-> 🔐 API keys, tokens and other credentials must remain server-side and
-> must never be committed to Git or exposed in frontend code.
+> 🔐 API keys, tokens and other credentials must remain server-side and must never be committed to Git or exposed in frontend code.
 
-------------------------------------------------------------------------
+---
+
+# 🌐 Domain & Hosting
+
+The platform can initially run using a normal deployment URL.
+
+```text
+https://smartcampus.example.com
+```
+
+College-specific routing can support:
+
+```text
+https://smartcampus.example.com/ABC-7X29
+```
+
+Future deployments may support:
+
+```text
+https://portal.college-example.edu
+```
+
+A college can optionally use its own:
+
+- Domain
+- Server
+- Hosting
+- Database
+- ERP/API
+
+---
 
 # 🏗️ Architecture
 
-``` text
+```text
 ┌────────────────────────────────────────────────────┐
 │              Student / Teacher / Admin             │
 └──────────────────────────┬─────────────────────────┘
@@ -413,33 +402,33 @@ Integration Settings
         └──────────┘ └───────────┘ └─────────────┘
 ```
 
-------------------------------------------------------------------------
+---
 
 # 💻 Technology Stack
 
-  Layer               Technology
-  ------------------- -------------------------
-  Frontend            React + TypeScript
-  Build Tool          Vite
-  Backend             Python + FastAPI
-  Database            PostgreSQL
-  API                 REST + JSON
-  Authentication      JWT
-  Password Security   Secure Password Hashing
-  Camera              HTML5 Camera API
-  Charts              Recharts / Chart.js
-  Reports             Python
-  Containerization    Docker
-  Deployment          Linux / Cloud
+| Layer | Technology |
+|---|---|
+| Frontend | React + TypeScript |
+| Build Tool | Vite |
+| Backend | Python + FastAPI |
+| Database | PostgreSQL |
+| API | REST + JSON |
+| Authentication | JWT |
+| Password Security | Secure Password Hashing |
+| Camera | HTML5 Camera API |
+| Charts | Recharts / Chart.js |
+| Reports | Python |
+| Containerization | Docker |
+| Deployment | Linux / Cloud |
 
-------------------------------------------------------------------------
+---
 
 # 📁 Project Structure
 
-``` text
+```text
 smartcampus-one/
 │
-├── frontend/                  # React + TypeScript
+├── frontend/                 # React + TypeScript
 │   ├── src/
 │   │   ├── components/
 │   │   ├── pages/
@@ -451,7 +440,7 @@ smartcampus-one/
 │   │   └── assets/
 │   └── public/
 │
-├── backend/                   # FastAPI
+├── backend/                  # FastAPI
 │   ├── app/
 │   │   ├── api/
 │   │   │   └── routes/
@@ -465,7 +454,7 @@ smartcampus-one/
 │   ├── tests/
 │   └── requirements.txt
 │
-├── database/                  # Migrations & seeds
+├── database/                 # Migrations & seeds
 │   ├── migrations/
 │   └── seeds/
 │
@@ -476,12 +465,12 @@ smartcampus-one/
 │   ├── notifications/
 │   └── integrations/
 │
-├── storage/                   # Runtime file storage
-├── docs/                      # Project documentation
-├── tests/                     # Integration & E2E tests
-├── deployment/                # Docker / Nginx / scripts
+├── storage/                  # Runtime file storage
+├── docs/                     # Project documentation
+├── tests/                    # Integration & E2E tests
+├── deployment/               # Docker / Nginx / scripts
 │
-├── assets/                    # README branding assets
+├── assets/                   # README branding
 │   ├── logo.svg
 │   └── banner.svg
 │
@@ -493,7 +482,7 @@ smartcampus-one/
 └── README.md
 ```
 
-------------------------------------------------------------------------
+---
 
 # 🔐 Security
 
@@ -501,21 +490,21 @@ Security is a core requirement.
 
 ### Security Principles
 
--   🔑 JWT authentication
--   👥 Role-based authorization
--   🔒 Password hashing
--   🏢 Tenant isolation
--   🛡️ API authorization
--   ✅ Input validation
--   📝 Audit logging
--   🔐 Environment-based secrets
--   📁 Protected file access
--   🌐 HTTPS in production
--   🔑 Server-side API credentials
+- 🔑 JWT authentication
+- 👥 Role-based authorization
+- 🔒 Password hashing
+- 🏢 Tenant isolation
+- 🛡️ API authorization
+- ✅ Input validation
+- 📝 Audit logging
+- 🔐 Environment-based secrets
+- 📁 Protected file access
+- 🌐 HTTPS in production
+- 🔑 Server-side API credentials
 
 ### 🚫 Never Commit
 
-``` text
+```text
 .env
 API Keys
 Database Passwords
@@ -528,23 +517,22 @@ Private Credentials
 
 Use `.env.example` as the configuration template.
 
-------------------------------------------------------------------------
+---
 
 # 🚀 Installation
 
-> The installation guide will evolve as the project moves through
-> development phases.
+> The installation guide will evolve as the project moves through development phases.
 
 ### 1. Clone
 
-``` bash
+```bash
 git clone https://github.com/abhishek027aks/smartcampus-one.git
 cd smartcampus-one
 ```
 
 ### 2. Backend
 
-``` bash
+```bash
 cd backend
 
 python -m venv .venv
@@ -560,7 +548,7 @@ pip install -r requirements.txt
 
 ### 3. Frontend
 
-``` bash
+```bash
 cd frontend
 
 npm install
@@ -569,137 +557,102 @@ npm run dev
 
 ### 4. Docker
 
-``` bash
+```bash
 docker compose up --build
 ```
 
-------------------------------------------------------------------------
+---
 
 # 🛣️ Roadmap
 
-## Phase 1 --- Foundation
+## Phase 1 — Foundation
 
--   [x] GitHub repository
--   [ ] Architecture
--   [ ] Frontend setup
--   [ ] Backend setup
--   [ ] PostgreSQL setup
--   [ ] Docker setup
+- [x] GitHub repository
+- [ ] Architecture
+- [ ] Frontend setup
+- [ ] Backend setup
+- [ ] PostgreSQL setup
+- [ ] Docker setup
 
-## Phase 2 --- Authentication
+## Phase 2 — Authentication
 
--   [ ] Login
--   [ ] JWT authentication
--   [ ] Role-based access
--   [ ] Password security
+- [ ] Login
+- [ ] JWT authentication
+- [ ] Role-based access
+- [ ] Password security
 
-## Phase 3 --- College Management
+## Phase 3 — College Management
 
--   [ ] College creation
--   [ ] Unique college code
--   [ ] Departments
--   [ ] Courses
--   [ ] Semesters
--   [ ] Sections
--   [ ] Students
--   [ ] Teachers
--   [ ] Subjects
--   [ ] Rooms
+- [ ] College creation
+- [ ] Unique college code
+- [ ] Departments
+- [ ] Courses
+- [ ] Semesters
+- [ ] Sections
+- [ ] Students
+- [ ] Teachers
+- [ ] Subjects
+- [ ] Rooms
 
-## Phase 4 --- Timetable
+## Phase 4 — Timetable
 
--   [ ] Manual timetable
--   [ ] Automatic timetable generator
--   [ ] Conflict detection
--   [ ] Room management
--   [ ] Teacher availability
--   [ ] Holiday management
+- [ ] Manual timetable
+- [ ] Automatic timetable generator
+- [ ] Conflict detection
+- [ ] Room management
+- [ ] Teacher availability
+- [ ] Holiday management
 
-## Phase 5 --- Attendance
+## Phase 5 — Attendance
 
--   [ ] Lecture sessions
--   [ ] Temporary code
--   [ ] Expiry timer
--   [ ] Live photo capture
--   [ ] Verification
--   [ ] Manual attendance
--   [ ] Attendance history
--   [ ] Audit logs
+- [ ] Lecture sessions
+- [ ] Temporary code
+- [ ] Expiry timer
+- [ ] Live photo capture
+- [ ] Verification
+- [ ] Manual attendance
+- [ ] Attendance history
+- [ ] Audit logs
 
-## Phase 6 --- Analytics & Reports
+## Phase 6 — Analytics & Reports
 
--   [ ] Attendance percentage
--   [ ] Student dashboard
--   [ ] Teacher dashboard
--   [ ] Admin dashboard
--   [ ] Analytics
--   [ ] PDF
--   [ ] Excel
--   [ ] CSV
+- [ ] Attendance percentage
+- [ ] Student dashboard
+- [ ] Teacher dashboard
+- [ ] Admin dashboard
+- [ ] Analytics
+- [ ] PDF
+- [ ] Excel
+- [ ] CSV
 
-## Phase 7 --- Advanced Features
+## Phase 7 — Advanced Features
 
--   [ ] Low attendance alerts
--   [ ] Correction requests
--   [ ] Notifications
--   [ ] Location verification
--   [ ] Wi-Fi verification
--   [ ] College branding
--   [ ] Custom domain
--   [ ] API integrations
--   [ ] Attendance prediction
+- [ ] Low attendance alerts
+- [ ] Correction requests
+- [ ] Notifications
+- [ ] Location verification
+- [ ] Wi-Fi verification
+- [ ] College branding
+- [ ] Custom domain
+- [ ] API integrations
+- [ ] Attendance prediction
 
-## Phase 8 --- Production
+## Phase 8 — Production
 
--   [ ] Production Docker
--   [ ] PostgreSQL deployment
--   [ ] Secure photo storage
--   [ ] HTTPS
--   [ ] Domain
--   [ ] Backup
--   [ ] Monitoring
--   [ ] Performance optimization
+- [ ] Production Docker
+- [ ] PostgreSQL deployment
+- [ ] Secure photo storage
+- [ ] HTTPS
+- [ ] Domain
+- [ ] Backup
+- [ ] Monitoring
+- [ ] Performance optimization
 
-------------------------------------------------------------------------
-
-# 📱 Responsive Experience
-
-The platform is designed for:
-
--   💻 Desktop
--   🖥️ Laptop
--   📱 Android
--   🍎 iPhone
--   📟 Tablet
-
-The first release can use a responsive web/PWA architecture, with a
-dedicated Android application as a future enhancement.
-
-------------------------------------------------------------------------
-
-# 🔮 Future Enhancements
-
--   📱 Android Application
--   📝 Assignments
--   📚 Study Material
--   🧾 Examination Management
--   📊 Internal Marks
--   🎓 Results
--   📢 Notices
--   📖 Library Management
--   🏠 Hostel Management
--   🚌 Transport Management
--   📈 Advanced Analytics
--   🔌 ERP Integration
--   📧 Email Integration
--   💬 SMS / WhatsApp Integration
--   💳 Subscription Management
-
-------------------------------------------------------------------------
+---
 
 # 🧪 Testing Strategy
 
-``` text
+```text
 Unit Testing
      ↓
 Integration Testing
@@ -715,23 +668,57 @@ Production Testing
 
 Critical areas:
 
--   Authentication
--   Authorization
--   Tenant isolation
--   Timetable conflicts
--   Code expiry
--   Duplicate attendance
--   Live photo capture
--   Reports
--   API integrations
+- Authentication
+- Authorization
+- Tenant isolation
+- Timetable conflicts
+- Code expiry
+- Duplicate attendance
+- Live photo capture
+- Reports
+- API integrations
 
-------------------------------------------------------------------------
+---
+
+# 📱 Responsive Experience
+
+The platform is designed for:
+
+- 💻 Desktop
+- 🖥️ Laptop
+- 📱 Android
+- 🍎 iPhone
+- 📟 Tablet
+
+The first release can use a responsive web/PWA architecture, with a dedicated Android application as a future enhancement.
+
+---
+
+# 🔮 Future Enhancements
+
+- 📱 Android Application
+- 📝 Assignments
+- 📚 Study Material
+- 🧾 Examination Management
+- 📊 Internal Marks
+- 🎓 Results
+- 📢 Notices
+- 📖 Library Management
+- 🏠 Hostel Management
+- 🚌 Transport Management
+- 📈 Advanced Analytics
+- 🔌 ERP Integration
+- 📧 Email Integration
+- 💬 SMS / WhatsApp Integration
+- 💳 Subscription Management
+
+---
 
 # 📚 Documentation
 
 Documentation will be maintained under:
 
-``` text
+```text
 docs/
 ├── architecture/
 ├── api/
@@ -742,22 +729,22 @@ docs/
 
 Planned documentation:
 
--   System architecture
--   Database design
--   API documentation
--   Installation guide
--   Deployment guide
--   User guide
--   BCA project report
--   Development notes
+- System architecture
+- Database design
+- API documentation
+- Installation guide
+- Deployment guide
+- User guide
+- BCA project report
+- Development notes
 
-------------------------------------------------------------------------
+---
 
 # 🤝 Contributing
 
 Contributions, suggestions, bug reports and improvements are welcome.
 
-``` text
+```text
 Fork
   ↓
 Create Feature Branch
@@ -773,64 +760,70 @@ Pull Request
 
 Please test changes before opening a pull request.
 
-------------------------------------------------------------------------
+---
 
 # 🎓 Academic Project
 
-  Detail          Information
-  --------------- ------------------------
-  Project         SmartCampus One
-  Type            BCA Final Year Project
-  Architecture    Multi-Tenant
-  Primary Focus   Timetable + Attendance
-  Frontend        React + TypeScript
-  Backend         FastAPI + Python
-  Database        PostgreSQL
+| Detail | Information |
+|---|---|
+| Project | SmartCampus One |
+| Type | BCA Final Year Project |
+| Architecture | Multi-Tenant |
+| Primary Focus | Timetable + Attendance |
+| Frontend | React + TypeScript |
+| Backend | FastAPI + Python |
+| Database | PostgreSQL |
 
 ### Project Title
 
-**SmartCampus One: A Multi-College Smart Timetable and Attendance
-Management Platform**
+**SmartCampus One: A Multi-College Smart Timetable and Attendance Management Platform**
 
 ### Tagline
 
 > **One Smart Platform for Every Campus**
 
-------------------------------------------------------------------------
+---
 
 # 👨‍💻 Author
 
-::: {align="center"}
-`<img src="assets/logo.svg" width="70" alt="SmartCampus One">`{=html}
+<div align="center">
+
+<img src="assets/logo.svg" alt="SmartCampus One" width="70">
 
 ### ABHISHEK KUMAR SINGH
 
-Developer & Project Author
+**Developer & Project Author**
 
-`<a href="https://github.com/abhishek027aks">`{=html}
-`<img src="https://img.shields.io/badge/GitHub-abhishek027aks-181717?style=for-the-badge&logo=github" alt="GitHub">`{=html}
-`</a>`{=html}
-:::
+<a href="https://github.com/abhishek027aks">
+  <img src="https://img.shields.io/badge/GitHub-abhishek027aks-181717?style=for-the-badge&logo=github" alt="GitHub">
+</a>
 
-------------------------------------------------------------------------
+</div>
+
+---
 
 # ⭐ Support
 
 If you find **SmartCampus One** useful:
 
-⭐ Star the repository\
-🍴 Fork the project\
-🐛 Report a bug\
+⭐ Star the repository
+
+🍴 Fork the project
+
+🐛 Report a bug
+
 💡 Suggest a feature
 
-------------------------------------------------------------------------
+---
 
-::: {align="center"}
-### 🎓 SmartCampus One
+<div align="center">
 
-**One Smart Platform for Every Campus**
+## 🎓 SmartCampus One
+
+### One Smart Platform for Every Campus
 
 Built with ❤️ by **ABHISHEK KUMAR SINGH**
 
 **Code • Learn • Build • Innovate**
-:::
+
+</div>
