@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 420">
+<defs>
+ <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#071A3A"/><stop offset=".55" stop-color="#123B7A"/><stop offset="1" stop-color="#0EA5A8"/></linearGradient>
+ <linearGradient id="txt" x1="0" y1="0" x2="1" y2="0"><stop stop-color="#60A5FA"/><stop offset=".55" stop-color="#22D3EE"/><stop offset="1" stop-color="#FBBF24"/></linearGradient>
+</defs>
+<rect width="1600" height="420" rx="32" fill="url(#bg)"/>
+<circle cx="1350" cy="40" r="240" fill="#2563EB" opacity=".16"/><circle cx="1500" cy="360" r="260" fill="#F59E0B" opacity=".10"/>
+<g transform="translate(75 55) scale(.61)"><rect x="18" y="18" width="476" height="476" rx="110" fill="#071A3A"/><circle cx="256" cy="256" r="175" fill="white"/><path d="M145 228l111-64 111 64-111 64z" fill="#071A3A"/><path d="M188 250v68c20 18 43 27 68 27s48-9 68-27v-68l-68 39z" fill="#2563EB"/><path d="M232 321h48v45h-48z" fill="#F59E0B"/><path d="M126 347c29-4 51 4 70 25 18 20 37 31 60 31 23 0 42-11 60-31 19-21 41-29 70-25-25 34-67 56-130 56s-105-22-130-56z" fill="#22C55E"/></g>
+<text x="430" y="150" font-family="Arial,Helvetica,sans-serif" font-size="74" font-weight="800" fill="white">Smart<tspan fill="url(#txt)">Campus One</tspan></text>
+<text x="434" y="215" font-family="Arial,Helvetica,sans-serif" font-size="30" fill="#E5F3FF">One Smart Platform for Every Campus</text>
+<rect x="434" y="250" width="690" height="58" rx="29" fill="white" opacity=".10" stroke="white" stroke-opacity=".25"/>
+<text x="463" y="288" font-family="Arial,Helvetica,sans-serif" font-size="22" fill="white">Multi-College • Smart Timetable • Code Attendance • Analytics</text>
+<text x="434" y="350" font-family="Arial,Helvetica,sans-serif" font-size="20" fill="#BAE6FD">BCA Final Year Project • Active Development</text>
+</svg>
