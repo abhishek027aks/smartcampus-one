@@ -1,0 +1,35 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: smartcampus-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: smartcampus
+      POSTGRES_USER: smartcampus
+      POSTGRES_PASSWORD: smartcampus_dev
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U smartcampus -d smartcampus"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build: ./backend
+    container_name: smartcampus-backend
+    environment:
+      APP_ENV: development
+      DATABASE_URL: postgresql+psycopg://smartcampus:smartcampus_dev@postgres:5432/smartcampus
+      SECRET_KEY: change-this-development-secret
+      CORS_ORIGINS: http://localhost:5173
+    ports:
+      - "8000:8000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+volumes:
+  postgres_data:
