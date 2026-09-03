@@ -3,6 +3,7 @@
 `<img src="assets/banner.svg" alt="SmartCampus One" width="100%">`{=html}
 `</a>`{=html}
 
+
 `<br/>`{=html}
 
 `<img src="assets/logo.svg" alt="SmartCampus One Logo" width="110"/>`{=html}
