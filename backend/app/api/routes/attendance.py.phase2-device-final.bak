@@ -214,6 +214,7 @@ def close_attendance_session(
 @router.post("/sessions/{session_id}/mark")
 async def mark_attendance(
     session_id: int,
+    student_id: int = Form(...),
     session_code: str = Form(...),
     device_session_id: str = Form(...),
     photo: UploadFile = File(...),
@@ -318,9 +319,8 @@ async def mark_attendance(
                 detail="Longitude must be between -180 and 180.",
             )
 
-    # Security: resolve the student from the authenticated user.
-    # The client is not allowed to choose another student's database ID.
     student = db.query(Student).filter(
+        Student.id == student_id,
         Student.user_id == current_user.id,
         Student.college_id == session.college_id,
         Student.section_id == session.section_id,
@@ -335,27 +335,13 @@ async def mark_attendance(
 
     existing = db.query(AttendanceRecord).filter(
         AttendanceRecord.session_id == session_id,
-        AttendanceRecord.student_id == student.id,
+        AttendanceRecord.student_id == student_id,
     ).first()
 
     if existing:
         raise HTTPException(
             status_code=409,
             detail="Attendance has already been marked for this student.",
-        )
-
-    # Security: prevent one browser/device session from being
-    # reused by a different student during the same attendance session.
-    device_used_by_other_student = db.query(AttendanceRecord).filter(
-        AttendanceRecord.session_id == session_id,
-        AttendanceRecord.device_session_id == device_session_value,
-        AttendanceRecord.student_id != student_id,
-    ).first()
-
-    if device_used_by_other_student:
-        raise HTTPException(
-            status_code=409,
-            detail="This device session has already been used by another student for this attendance session.",
         )
 
     # Security: allow only supported image MIME types.

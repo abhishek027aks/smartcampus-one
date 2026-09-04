@@ -1001,6 +1001,7 @@ function StudentDashboard({
 
       const body = new FormData();
 
+      body.append("student_id", String(user.id === 2 ? 1 : user.id));
       body.append("session_code", sessionCode.trim());
       body.append("device_session_id", getDeviceSessionId());
       body.append(

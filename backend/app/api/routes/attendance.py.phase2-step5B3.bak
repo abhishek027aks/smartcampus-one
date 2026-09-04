@@ -107,8 +107,6 @@ def start_attendance_session(
             detail="Subject and section belong to different semesters.",
         )
 
-    now = datetime.utcnow()
-
     active_session = db.query(AttendanceSession).filter(
         AttendanceSession.college_id == current_user.college_id,
         AttendanceSession.section_id == section_id,
@@ -118,18 +116,12 @@ def start_attendance_session(
     ).first()
 
     if active_session:
-        if active_session.expires_at <= now:
-            # Security/cleanup: automatically close expired sessions
-            # before allowing a new attendance session to start.
-            active_session.is_active = False
-            active_session.closed_at = now
-            db.commit()
-        else:
-            raise HTTPException(
-                status_code=409,
-                detail="An active attendance session already exists.",
-            )
+        raise HTTPException(
+            status_code=409,
+            detail="An active attendance session already exists.",
+        )
 
+    now = datetime.utcnow()
     expires_at = now + timedelta(minutes=duration_minutes)
 
     session = AttendanceSession(
@@ -214,8 +206,8 @@ def close_attendance_session(
 @router.post("/sessions/{session_id}/mark")
 async def mark_attendance(
     session_id: int,
+    student_id: int = Form(...),
     session_code: str = Form(...),
-    device_session_id: str = Form(...),
     photo: UploadFile = File(...),
     location_latitude: str | None = Form(None),
     location_longitude: str | None = Form(None),
@@ -263,21 +255,6 @@ async def mark_attendance(
             detail="Invalid attendance code.",
         )
 
-    # Security: validate the browser device session ID.
-    device_session_value = device_session_id.strip()
-
-    if not device_session_value:
-        raise HTTPException(
-            status_code=400,
-            detail="Device session ID is required.",
-        )
-
-    if len(device_session_value) > 128:
-        raise HTTPException(
-            status_code=400,
-            detail="Device session ID is too long.",
-        )
-
     # Security: validate GPS coordinates when supplied.
     latitude_value = (
         location_latitude.strip()
@@ -318,9 +295,8 @@ async def mark_attendance(
                 detail="Longitude must be between -180 and 180.",
             )
 
-    # Security: resolve the student from the authenticated user.
-    # The client is not allowed to choose another student's database ID.
     student = db.query(Student).filter(
+        Student.id == student_id,
         Student.user_id == current_user.id,
         Student.college_id == session.college_id,
         Student.section_id == session.section_id,
@@ -335,27 +311,13 @@ async def mark_attendance(
 
     existing = db.query(AttendanceRecord).filter(
         AttendanceRecord.session_id == session_id,
-        AttendanceRecord.student_id == student.id,
+        AttendanceRecord.student_id == student_id,
     ).first()
 
     if existing:
         raise HTTPException(
             status_code=409,
             detail="Attendance has already been marked for this student.",
-        )
-
-    # Security: prevent one browser/device session from being
-    # reused by a different student during the same attendance session.
-    device_used_by_other_student = db.query(AttendanceRecord).filter(
-        AttendanceRecord.session_id == session_id,
-        AttendanceRecord.device_session_id == device_session_value,
-        AttendanceRecord.student_id != student_id,
-    ).first()
-
-    if device_used_by_other_student:
-        raise HTTPException(
-            status_code=409,
-            detail="This device session has already been used by another student for this attendance session.",
         )
 
     # Security: allow only supported image MIME types.
@@ -453,7 +415,6 @@ async def mark_attendance(
             live_photo_path=str(photo_path.relative_to(PROJECT_ROOT)),
             location_latitude=latitude_value,
             location_longitude=longitude_value,
-            device_session_id=device_session_value,
             verification_method=(
                 "code_photo_location"
                 if latitude_value is not None and longitude_value is not None
