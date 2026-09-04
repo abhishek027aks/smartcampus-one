@@ -2,7 +2,7 @@
 from pathlib import Path
 import secrets
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, Response, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
 from app.api.routes.auth import get_current_user, require_roles
@@ -255,46 +255,6 @@ async def mark_attendance(
             detail="Invalid attendance code.",
         )
 
-    # Security: validate GPS coordinates when supplied.
-    latitude_value = (
-        location_latitude.strip()
-        if location_latitude is not None
-        else None
-    )
-    longitude_value = (
-        location_longitude.strip()
-        if location_longitude is not None
-        else None
-    )
-
-    if (latitude_value is None) != (longitude_value is None):
-        raise HTTPException(
-            status_code=400,
-            detail="Both latitude and longitude are required together.",
-        )
-
-    if latitude_value is not None and longitude_value is not None:
-        try:
-            latitude = float(latitude_value)
-            longitude = float(longitude_value)
-        except (TypeError, ValueError):
-            raise HTTPException(
-                status_code=400,
-                detail="Invalid GPS coordinates.",
-            )
-
-        if not (-90 <= latitude <= 90):
-            raise HTTPException(
-                status_code=400,
-                detail="Latitude must be between -90 and 90.",
-            )
-
-        if not (-180 <= longitude <= 180):
-            raise HTTPException(
-                status_code=400,
-                detail="Longitude must be between -180 and 180.",
-            )
-
     student = db.query(Student).filter(
         Student.id == student_id,
         Student.user_id == current_user.id,
@@ -320,28 +280,10 @@ async def mark_attendance(
             detail="Attendance has already been marked for this student.",
         )
 
-    # Security: allow only supported image MIME types.
-    allowed_content_types = {
-        "image/jpeg": ".jpg",
-        "image/png": ".png",
-        "image/webp": ".webp",
-    }
-
-    content_type = (photo.content_type or "").lower().strip()
-
-    if content_type not in allowed_content_types:
+    if not photo.content_type or not photo.content_type.startswith("image/"):
         raise HTTPException(
             status_code=400,
-            detail="Only JPEG, PNG, and WebP images are allowed.",
-        )
-
-    # Security: reject suspicious or excessively long filenames.
-    original_filename = Path(photo.filename or "").name
-
-    if len(original_filename) > 255:
-        raise HTTPException(
-            status_code=400,
-            detail="Photo filename is too long.",
+            detail="Only image files are allowed.",
         )
 
     content = await photo.read()
@@ -358,42 +300,10 @@ async def mark_attendance(
             detail="Photo size must be 5 MB or less.",
         )
 
-    extension = Path(original_filename).suffix.lower()
+    extension = Path(photo.filename or "").suffix.lower()
 
-    expected_extension = allowed_content_types[content_type]
-
-    if extension == ".jpeg":
+    if extension not in {".jpg", ".jpeg", ".png", ".webp"}:
         extension = ".jpg"
-
-    if extension != expected_extension:
-        raise HTTPException(
-            status_code=400,
-            detail="Photo file extension does not match its image type.",
-        )
-
-    # Security: verify the actual binary image signature.
-    valid_signature = False
-
-    if content_type == "image/jpeg":
-        valid_signature = content.startswith(b"\\xFF\\xD8\\xFF")
-
-    elif content_type == "image/png":
-        valid_signature = content.startswith(
-            b"\\x89PNG\\r\\n\\x1a\\n"
-        )
-
-    elif content_type == "image/webp":
-        valid_signature = (
-            len(content) >= 12
-            and content.startswith(b"RIFF")
-            and content[8:12] == b"WEBP"
-        )
-
-    if not valid_signature:
-        raise HTTPException(
-            status_code=400,
-            detail="Photo content does not match the declared image type.",
-        )
 
     filename = (
         f"session_{session_id}_student_{student_id}_"
@@ -401,45 +311,27 @@ async def mark_attendance(
     )
 
     photo_path = STORAGE_DIR / filename
+    photo_path.write_bytes(content)
 
-    try:
-        # Save the validated image only inside the controlled attendance storage.
-        photo_path.write_bytes(content)
+    record = AttendanceRecord(
+        college_id=session.college_id,
+        session_id=session.id,
+        student_id=student.id,
+        status="present",
+        marked_at=now,
+        live_photo_path=str(photo_path.relative_to(PROJECT_ROOT)),
+        location_latitude=location_latitude.strip() if location_latitude else None,
+        location_longitude=location_longitude.strip() if location_longitude else None,
+        verification_method=(
+            "code_photo_location"
+            if location_latitude and location_longitude
+            else "code_photo"
+        ),
+    )
 
-        record = AttendanceRecord(
-            college_id=session.college_id,
-            session_id=session.id,
-            student_id=student.id,
-            status="present",
-            marked_at=now,
-            live_photo_path=str(photo_path.relative_to(PROJECT_ROOT)),
-            location_latitude=latitude_value,
-            location_longitude=longitude_value,
-            verification_method=(
-                "code_photo_location"
-                if latitude_value is not None and longitude_value is not None
-                else "code_photo"
-            ),
-        )
-
-        db.add(record)
-        db.commit()
-        db.refresh(record)
-
-    except Exception:
-        db.rollback()
-
-        # Remove the photo if the database operation fails.
-        if photo_path.exists():
-            try:
-                photo_path.unlink()
-            except OSError:
-                pass
-
-        raise HTTPException(
-            status_code=500,
-            detail="Unable to save attendance record.",
-        )
+    db.add(record)
+    db.commit()
+    db.refresh(record)
 
     return {
         "message": "Attendance marked successfully.",
@@ -450,104 +342,6 @@ async def mark_attendance(
         "marked_at": record.marked_at,
         "verification_method": record.verification_method,
     }
-
-
-@router.get("/records/{record_id}/photo")
-def get_attendance_photo(
-    record_id: int,
-    db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
-):
-    record = db.query(AttendanceRecord).filter(
-        AttendanceRecord.id == record_id,
-        AttendanceRecord.college_id == current_user.college_id,
-    ).first()
-
-    if not record:
-        raise HTTPException(
-            status_code=404,
-            detail="Attendance record not found.",
-        )
-
-    # Students may access only their own attendance evidence.
-    if current_user.role == "student":
-        student = db.query(Student).filter(
-            Student.user_id == current_user.id,
-            Student.college_id == current_user.college_id,
-            Student.is_active.is_(True),
-        ).first()
-
-        if not student or record.student_id != student.id:
-            raise HTTPException(
-                status_code=403,
-                detail="You are not authorized to access this photo.",
-            )
-
-    # Teachers/admins must remain inside their own college.
-    elif current_user.role not in {
-        "teacher",
-        "college_admin",
-        "super_admin",
-    }:
-        raise HTTPException(
-            status_code=403,
-            detail="You are not authorized to access this photo.",
-        )
-
-    if not record.live_photo_path:
-        raise HTTPException(
-            status_code=404,
-            detail="Attendance photo not available.",
-        )
-
-    project_root = PROJECT_ROOT.resolve()
-    photo_path = (PROJECT_ROOT / record.live_photo_path).resolve()
-
-    # Prevent path traversal outside the controlled project storage.
-    try:
-        photo_path.relative_to(project_root)
-    except ValueError:
-        raise HTTPException(
-            status_code=403,
-            detail="Invalid photo storage path.",
-        )
-
-    attendance_storage = STORAGE_DIR.resolve()
-
-    try:
-        photo_path.relative_to(attendance_storage)
-    except ValueError:
-        raise HTTPException(
-            status_code=403,
-            detail="Photo is outside the attendance storage.",
-        )
-
-    if not photo_path.is_file():
-        raise HTTPException(
-            status_code=404,
-            detail="Attendance photo file not found.",
-        )
-
-    media_type = {
-        ".jpg": "image/jpeg",
-        ".jpeg": "image/jpeg",
-        ".png": "image/png",
-        ".webp": "image/webp",
-    }.get(photo_path.suffix.lower())
-
-    if not media_type:
-        raise HTTPException(
-            status_code=400,
-            detail="Unsupported attendance photo type.",
-        )
-
-    return Response(
-        content=photo_path.read_bytes(),
-        media_type=media_type,
-        headers={
-            "Cache-Control": "private, no-store",
-        },
-    )
 
 
 @router.get("/sessions/{session_id}")

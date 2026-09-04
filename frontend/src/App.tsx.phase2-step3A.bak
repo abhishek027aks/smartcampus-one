@@ -949,36 +949,6 @@ function StudentDashboard({
     setMessage("");
 
     try {
-      let latitude: number | null = null;
-      let longitude: number | null = null;
-
-      // GPS is currently optional. If the browser supports location,
-      // try to capture it without blocking attendance when unavailable.
-      if ("geolocation" in navigator) {
-        try {
-          const position = await new Promise<GeolocationPosition>(
-            (resolve, reject) => {
-              navigator.geolocation.getCurrentPosition(
-                resolve,
-                reject,
-                {
-                  enableHighAccuracy: true,
-                  timeout: 10000,
-                  maximumAge: 30000,
-                },
-              );
-            },
-          );
-
-          latitude = position.coords.latitude;
-          longitude = position.coords.longitude;
-        } catch {
-          // GPS is optional in the current phase.
-          latitude = null;
-          longitude = null;
-        }
-      }
-
       const body = new FormData();
 
       body.append("student_id", String(user.id === 2 ? 1 : user.id));
@@ -988,11 +958,6 @@ function StudentDashboard({
         capturedPhoto,
         "live-attendance.jpg",
       );
-
-      if (latitude !== null && longitude !== null) {
-        body.append("location_latitude", String(latitude));
-        body.append("location_longitude", String(longitude));
-      }
 
       const response = await fetch(
         `${API_BASE_URL}/attendance/sessions/${sessionId.trim()}/mark`,
@@ -1014,9 +979,7 @@ function StudentDashboard({
       }
 
       setMessage(
-        latitude !== null && longitude !== null
-          ? `Attendance marked successfully with location verification. Attendance ID: ${data.attendance_id}`
-          : `Attendance marked successfully. Attendance ID: ${data.attendance_id}`,
+        `Attendance marked successfully. Attendance ID: ${data.attendance_id}`,
       );
 
       setCapturedPhoto(null);

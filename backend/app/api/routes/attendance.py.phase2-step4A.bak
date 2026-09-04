@@ -2,7 +2,7 @@
 from pathlib import Path
 import secrets
 
-from fastapi import APIRouter, Depends, File, Form, HTTPException, Response, UploadFile
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
 from sqlalchemy.orm import Session
 
 from app.api.routes.auth import get_current_user, require_roles
@@ -371,75 +371,33 @@ async def mark_attendance(
             detail="Photo file extension does not match its image type.",
         )
 
-    # Security: verify the actual binary image signature.
-    valid_signature = False
-
-    if content_type == "image/jpeg":
-        valid_signature = content.startswith(b"\\xFF\\xD8\\xFF")
-
-    elif content_type == "image/png":
-        valid_signature = content.startswith(
-            b"\\x89PNG\\r\\n\\x1a\\n"
-        )
-
-    elif content_type == "image/webp":
-        valid_signature = (
-            len(content) >= 12
-            and content.startswith(b"RIFF")
-            and content[8:12] == b"WEBP"
-        )
-
-    if not valid_signature:
-        raise HTTPException(
-            status_code=400,
-            detail="Photo content does not match the declared image type.",
-        )
-
     filename = (
         f"session_{session_id}_student_{student_id}_"
         f"{secrets.token_hex(8)}{extension}"
     )
 
     photo_path = STORAGE_DIR / filename
+    photo_path.write_bytes(content)
 
-    try:
-        # Save the validated image only inside the controlled attendance storage.
-        photo_path.write_bytes(content)
+    record = AttendanceRecord(
+        college_id=session.college_id,
+        session_id=session.id,
+        student_id=student.id,
+        status="present",
+        marked_at=now,
+        live_photo_path=str(photo_path.relative_to(PROJECT_ROOT)),
+        location_latitude=latitude_value,
+        location_longitude=longitude_value,
+        verification_method=(
+            "code_photo_location"
+            if latitude_value is not None and longitude_value is not None
+            else "code_photo"
+        ),
+    )
 
-        record = AttendanceRecord(
-            college_id=session.college_id,
-            session_id=session.id,
-            student_id=student.id,
-            status="present",
-            marked_at=now,
-            live_photo_path=str(photo_path.relative_to(PROJECT_ROOT)),
-            location_latitude=latitude_value,
-            location_longitude=longitude_value,
-            verification_method=(
-                "code_photo_location"
-                if latitude_value is not None and longitude_value is not None
-                else "code_photo"
-            ),
-        )
-
-        db.add(record)
-        db.commit()
-        db.refresh(record)
-
-    except Exception:
-        db.rollback()
-
-        # Remove the photo if the database operation fails.
-        if photo_path.exists():
-            try:
-                photo_path.unlink()
-            except OSError:
-                pass
-
-        raise HTTPException(
-            status_code=500,
-            detail="Unable to save attendance record.",
-        )
+    db.add(record)
+    db.commit()
+    db.refresh(record)
 
     return {
         "message": "Attendance marked successfully.",
@@ -450,104 +408,6 @@ async def mark_attendance(
         "marked_at": record.marked_at,
         "verification_method": record.verification_method,
     }
-
-
-@router.get("/records/{record_id}/photo")
-def get_attendance_photo(
-    record_id: int,
-    db: Session = Depends(get_db),
-    current_user=Depends(get_current_user),
-):
-    record = db.query(AttendanceRecord).filter(
-        AttendanceRecord.id == record_id,
-        AttendanceRecord.college_id == current_user.college_id,
-    ).first()
-
-    if not record:
-        raise HTTPException(
-            status_code=404,
-            detail="Attendance record not found.",
-        )
-
-    # Students may access only their own attendance evidence.
-    if current_user.role == "student":
-        student = db.query(Student).filter(
-            Student.user_id == current_user.id,
-            Student.college_id == current_user.college_id,
-            Student.is_active.is_(True),
-        ).first()
-
-        if not student or record.student_id != student.id:
-            raise HTTPException(
-                status_code=403,
-                detail="You are not authorized to access this photo.",
-            )
-
-    # Teachers/admins must remain inside their own college.
-    elif current_user.role not in {
-        "teacher",
-        "college_admin",
-        "super_admin",
-    }:
-        raise HTTPException(
-            status_code=403,
-            detail="You are not authorized to access this photo.",
-        )
-
-    if not record.live_photo_path:
-        raise HTTPException(
-            status_code=404,
-            detail="Attendance photo not available.",
-        )
-
-    project_root = PROJECT_ROOT.resolve()
-    photo_path = (PROJECT_ROOT / record.live_photo_path).resolve()
-
-    # Prevent path traversal outside the controlled project storage.
-    try:
-        photo_path.relative_to(project_root)
-    except ValueError:
-        raise HTTPException(
-            status_code=403,
-            detail="Invalid photo storage path.",
-        )
-
-    attendance_storage = STORAGE_DIR.resolve()
-
-    try:
-        photo_path.relative_to(attendance_storage)
-    except ValueError:
-        raise HTTPException(
-            status_code=403,
-            detail="Photo is outside the attendance storage.",
-        )
-
-    if not photo_path.is_file():
-        raise HTTPException(
-            status_code=404,
-            detail="Attendance photo file not found.",
-        )
-
-    media_type = {
-        ".jpg": "image/jpeg",
-        ".jpeg": "image/jpeg",
-        ".png": "image/png",
-        ".webp": "image/webp",
-    }.get(photo_path.suffix.lower())
-
-    if not media_type:
-        raise HTTPException(
-            status_code=400,
-            detail="Unsupported attendance photo type.",
-        )
-
-    return Response(
-        content=photo_path.read_bytes(),
-        media_type=media_type,
-        headers={
-            "Cache-Control": "private, no-store",
-        },
-    )
 
 
 @router.get("/sessions/{session_id}")
