@@ -1,0 +1,333 @@
+﻿from datetime import datetime, timedelta
+from pathlib import Path
+import secrets
+
+from fastapi import APIRouter, Depends, File, Form, HTTPException, UploadFile
+from sqlalchemy.orm import Session
+
+from app.api.routes.auth import get_current_user, require_roles
+from app.core.database import get_db
+from app.models import (
+    AttendanceRecord,
+    AttendanceSession,
+    Section,
+    Student,
+    Subject,
+    Teacher,
+)
+
+
+router = APIRouter(prefix="/attendance", tags=["Attendance"])
+
+PROJECT_ROOT = Path(__file__).resolve().parents[3]
+STORAGE_DIR = PROJECT_ROOT / "storage" / "attendance"
+STORAGE_DIR.mkdir(parents=True, exist_ok=True)
+
+
+def generate_session_code() -> str:
+    return str(secrets.randbelow(900000) + 100000)
+
+
+@router.post("/sessions/start")
+def start_attendance_session(
+    section_id: int,
+    subject_id: int,
+    teacher_id: int,
+    duration_minutes: int = 5,
+    db: Session = Depends(get_db),
+    current_user=Depends(
+        require_roles("teacher", "college_admin", "super_admin")
+    ),
+):
+    if duration_minutes < 1 or duration_minutes > 60:
+        raise HTTPException(
+            status_code=400,
+            detail="duration_minutes must be between 1 and 60.",
+        )
+
+    teacher = db.query(Teacher).filter(
+        Teacher.id == teacher_id,
+        Teacher.college_id == current_user.college_id,
+        Teacher.is_active.is_(True),
+    ).first()
+
+    section = db.query(Section).filter(
+        Section.id == section_id,
+        Section.college_id == current_user.college_id,
+        Section.is_active.is_(True),
+    ).first()
+
+    subject = db.query(Subject).filter(
+        Subject.id == subject_id,
+        Subject.college_id == current_user.college_id,
+        Subject.is_active.is_(True),
+    ).first()
+
+    if not teacher:
+        raise HTTPException(status_code=404, detail="Teacher not found.")
+
+    if not section:
+        raise HTTPException(status_code=404, detail="Section not found.")
+
+    if not subject:
+        raise HTTPException(status_code=404, detail="Subject not found.")
+
+    if current_user.role == "teacher" and teacher.user_id != current_user.id:
+        raise HTTPException(
+            status_code=403,
+            detail="Teacher can start attendance only for their own account.",
+        )
+
+    active_session = db.query(AttendanceSession).filter(
+        AttendanceSession.college_id == current_user.college_id,
+        AttendanceSession.section_id == section_id,
+        AttendanceSession.subject_id == subject_id,
+        AttendanceSession.teacher_id == teacher_id,
+        AttendanceSession.is_active.is_(True),
+    ).first()
+
+    if active_session:
+        raise HTTPException(
+            status_code=409,
+            detail="An active attendance session already exists.",
+        )
+
+    now = datetime.utcnow()
+    expires_at = now + timedelta(minutes=duration_minutes)
+
+    session = AttendanceSession(
+        college_id=current_user.college_id,
+        section_id=section_id,
+        subject_id=subject_id,
+        teacher_id=teacher_id,
+        session_code=generate_session_code(),
+        started_at=now,
+        expires_at=expires_at,
+        is_active=True,
+    )
+
+    db.add(session)
+    db.commit()
+    db.refresh(session)
+
+    return {
+        "message": "Attendance session started.",
+        "session_id": session.id,
+        "session_code": session.session_code,
+        "started_at": session.started_at,
+        "expires_at": session.expires_at,
+        "is_active": session.is_active,
+    }
+
+
+@router.post("/sessions/{session_id}/close")
+def close_attendance_session(
+    session_id: int,
+    db: Session = Depends(get_db),
+    current_user=Depends(
+        require_roles("teacher", "college_admin", "super_admin")
+    ),
+):
+    session = db.query(AttendanceSession).filter(
+        AttendanceSession.id == session_id,
+        AttendanceSession.college_id == current_user.college_id,
+    ).first()
+
+    if not session:
+        raise HTTPException(
+            status_code=404,
+            detail="Attendance session not found.",
+        )
+
+    if not session.is_active:
+        return {
+            "message": "Attendance session is already closed.",
+            "session_id": session.id,
+            "is_active": False,
+        }
+
+    if current_user.role == "teacher":
+        teacher = db.query(Teacher).filter(
+            Teacher.id == session.teacher_id,
+            Teacher.user_id == current_user.id,
+            Teacher.college_id == current_user.college_id,
+            Teacher.is_active.is_(True),
+        ).first()
+
+        if not teacher:
+            raise HTTPException(
+                status_code=403,
+                detail="Teacher can close only their own attendance session.",
+            )
+
+    session.is_active = False
+    session.closed_at = datetime.utcnow()
+
+    db.commit()
+    db.refresh(session)
+
+    return {
+        "message": "Attendance session closed.",
+        "session_id": session.id,
+        "closed_at": session.closed_at,
+        "is_active": session.is_active,
+    }
+
+
+@router.post("/sessions/{session_id}/mark")
+async def mark_attendance(
+    session_id: int,
+    student_id: int = Form(...),
+    session_code: str = Form(...),
+    photo: UploadFile = File(...),
+    db: Session = Depends(get_db),
+    current_user=Depends(require_roles("student")),
+):
+    session = db.query(AttendanceSession).filter(
+        AttendanceSession.id == session_id,
+        AttendanceSession.is_active.is_(True),
+    ).first()
+
+    if not session:
+        raise HTTPException(
+            status_code=404,
+            detail="Attendance session not found or already closed.",
+        )
+
+    now = datetime.utcnow()
+
+    if now > session.expires_at:
+        session.is_active = False
+        session.closed_at = now
+        db.commit()
+
+        raise HTTPException(
+            status_code=400,
+            detail="Attendance session has expired.",
+        )
+
+    if session.session_code != session_code.strip():
+        raise HTTPException(
+            status_code=400,
+            detail="Invalid attendance code.",
+        )
+
+    student = db.query(Student).filter(
+        Student.id == student_id,
+        Student.user_id == current_user.id,
+        Student.college_id == session.college_id,
+        Student.section_id == session.section_id,
+        Student.is_active.is_(True),
+    ).first()
+
+    if not student:
+        raise HTTPException(
+            status_code=403,
+            detail="Student is not authorized for this attendance session.",
+        )
+
+    existing = db.query(AttendanceRecord).filter(
+        AttendanceRecord.session_id == session_id,
+        AttendanceRecord.student_id == student_id,
+    ).first()
+
+    if existing:
+        raise HTTPException(
+            status_code=409,
+            detail="Attendance has already been marked for this student.",
+        )
+
+    if not photo.content_type or not photo.content_type.startswith("image/"):
+        raise HTTPException(
+            status_code=400,
+            detail="Only image files are allowed.",
+        )
+
+    content = await photo.read()
+
+    if not content:
+        raise HTTPException(
+            status_code=400,
+            detail="Photo is empty.",
+        )
+
+    if len(content) > 5 * 1024 * 1024:
+        raise HTTPException(
+            status_code=400,
+            detail="Photo size must be 5 MB or less.",
+        )
+
+    extension = Path(photo.filename or "").suffix.lower()
+
+    if extension not in {".jpg", ".jpeg", ".png", ".webp"}:
+        extension = ".jpg"
+
+    filename = (
+        f"session_{session_id}_student_{student_id}_"
+        f"{secrets.token_hex(8)}{extension}"
+    )
+
+    photo_path = STORAGE_DIR / filename
+    photo_path.write_bytes(content)
+
+    record = AttendanceRecord(
+        college_id=session.college_id,
+        session_id=session.id,
+        student_id=student.id,
+        status="present",
+        marked_at=now,
+        live_photo_path=str(photo_path.relative_to(PROJECT_ROOT)),
+        verification_method="code_photo",
+    )
+
+    db.add(record)
+    db.commit()
+    db.refresh(record)
+
+    return {
+        "message": "Attendance marked successfully.",
+        "attendance_id": record.id,
+        "session_id": record.session_id,
+        "student_id": record.student_id,
+        "status": record.status,
+        "marked_at": record.marked_at,
+        "verification_method": record.verification_method,
+    }
+
+
+@router.get("/sessions/{session_id}")
+def get_attendance_session(
+    session_id: int,
+    db: Session = Depends(get_db),
+    current_user=Depends(get_current_user),
+):
+    session = db.query(AttendanceSession).filter(
+        AttendanceSession.id == session_id,
+        AttendanceSession.college_id == current_user.college_id,
+    ).first()
+
+    if not session:
+        raise HTTPException(
+            status_code=404,
+            detail="Attendance session not found.",
+        )
+
+    return {
+        "id": session.id,
+        "section_id": session.section_id,
+        "subject_id": session.subject_id,
+        "teacher_id": session.teacher_id,
+        "session_code": (
+            session.session_code
+            if current_user.role in {
+                "teacher",
+                "college_admin",
+                "super_admin",
+            }
+            else None
+        ),
+        "started_at": session.started_at,
+        "expires_at": session.expires_at,
+        "closed_at": session.closed_at,
+        "is_active": session.is_active,
+    }
