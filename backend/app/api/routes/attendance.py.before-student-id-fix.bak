@@ -349,7 +349,7 @@ async def mark_attendance(
     device_used_by_other_student = db.query(AttendanceRecord).filter(
         AttendanceRecord.session_id == session_id,
         AttendanceRecord.device_session_id == device_session_value,
-        AttendanceRecord.student_id != student.id,
+        AttendanceRecord.student_id != student_id,
     ).first()
 
     if device_used_by_other_student:
@@ -434,7 +434,7 @@ async def mark_attendance(
         )
 
     filename = (
-        f"session_{session_id}_student_{student.id}_"
+        f"session_{session_id}_student_{student_id}_"
         f"{secrets.token_hex(8)}{extension}"
     )
 
@@ -625,4 +625,3 @@ def get_attendance_session(
         "closed_at": session.closed_at,
         "is_active": session.is_active,
     }
-

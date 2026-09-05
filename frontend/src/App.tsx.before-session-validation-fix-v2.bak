@@ -828,28 +828,6 @@ function StudentDashboard({
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   const streamRef = useRef<MediaStream | null>(null);
 
-  function clearAttendanceForm() {
-    streamRef.current?.getTracks().forEach((track) => {
-      track.stop();
-    });
-
-    streamRef.current = null;
-
-    setCameraOpen(false);
-    setCapturedPhoto(null);
-
-    setPreviewUrl((oldUrl) => {
-      if (oldUrl) {
-        URL.revokeObjectURL(oldUrl);
-      }
-
-      return "";
-    });
-
-    setSessionId("");
-    setSessionCode("");
-  }
-
   async function openCamera() {
     setError("");
     setMessage("");
@@ -991,25 +969,6 @@ function StudentDashboard({
     setMessage("");
 
     try {
-      const validationResponse = await fetch(
-        `${API_BASE_URL}/attendance/sessions/${sessionId.trim()}`,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        },
-      );
-
-      const validationData = await validationResponse.json();
-
-      if (!validationResponse.ok) {
-        clearAttendanceForm();
-        setError(
-          validationData.detail ||
-            "Attendance session is no longer active.",
-        );
-        return;
-      }
       let latitude: number | null = null;
       let longitude: number | null = null;
 
@@ -1080,7 +1039,15 @@ function StudentDashboard({
           : `Attendance marked successfully. Attendance ID: ${data.attendance_id}`,
       );
 
-      clearAttendanceForm();
+      setCapturedPhoto(null);
+
+      if (previewUrl) {
+        URL.revokeObjectURL(previewUrl);
+      }
+
+      setPreviewUrl("");
+      setSessionCode("");
+      setSessionId("");
     } catch (err) {
       setError(
         err instanceof Error
@@ -1170,22 +1137,9 @@ function StudentDashboard({
                 type="number"
                 min="1"
                 value={sessionId}
-                onChange={(event) => {
-                  setSessionId(event.target.value);
-                  setSessionCode("");
-                  setCapturedPhoto(null);
-
-                  setPreviewUrl((oldUrl) => {
-                    if (oldUrl) {
-                      URL.revokeObjectURL(oldUrl);
-                    }
-
-                    return "";
-                  });
-
-                  setError("");
-                  setMessage("");
-                }}
+                onChange={(event) =>
+                  setSessionId(event.target.value)
+                }
                 placeholder="Example: 3"
               />
             </div>
@@ -1201,24 +1155,11 @@ function StudentDashboard({
                 inputMode="numeric"
                 maxLength={6}
                 value={sessionCode}
-                onChange={(event) => {
+                onChange={(event) =>
                   setSessionCode(
                     event.target.value.replace(/\D/g, ""),
-                  );
-
-                  setCapturedPhoto(null);
-
-                  setPreviewUrl((oldUrl) => {
-                    if (oldUrl) {
-                      URL.revokeObjectURL(oldUrl);
-                    }
-
-                    return "";
-                  });
-
-                  setError("");
-                  setMessage("");
-                }}
+                  )
+                }
                 placeholder="6-digit code"
               />
             </div>
@@ -1341,5 +1282,4 @@ function StudentDashboard({
 }
 
 export default App;
-
 
